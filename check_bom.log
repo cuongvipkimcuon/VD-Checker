@@ -1,0 +1,79 @@
+2026-04-28 16:11:47,836 [ERROR] Loi compare
+Traceback (most recent call last):
+  File "C:\Users\DGA\Downloads\PROJECT TO MAU\check_bom.py", line 1123, in _run_compare
+    rows = self._selected_ke_rows()
+  File "C:\Users\DGA\Downloads\PROJECT TO MAU\check_bom.py", line 1102, in _selected_ke_rows
+    raise ValueError("Chua tai bang ke.")
+ValueError: Chua tai bang ke.
+2026-04-28 16:12:00,384 [ERROR] Loi compare
+Traceback (most recent call last):
+  File "C:\Users\DGA\Downloads\PROJECT TO MAU\check_bom.py", line 1123, in _run_compare
+    rows = self._selected_ke_rows()
+  File "C:\Users\DGA\Downloads\PROJECT TO MAU\check_bom.py", line 1102, in _selected_ke_rows
+    raise ValueError("Chua tai bang ke.")
+ValueError: Chua tai bang ke.
+2026-04-28 16:12:53,970 [INFO] Parse bang ke moi va luu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:25:54,116 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:26:34,591 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:26:47,069 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:29:58,677 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:30:06,139 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:32:43,604 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:15,467 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:16,407 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:17,163 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:17,417 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:17,611 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:18,253 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:19,322 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:20,130 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:20,321 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:20,513 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:20,704 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:20,897 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:21,098 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:21,287 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:21,480 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:21,670 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:21,893 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:27,164 [ERROR] Loi compare
+Traceback (most recent call last):
+  File "C:\Users\DGA\Downloads\PROJECT TO MAU\check_bom.py", line 1326, in _run_compare
+    rows = self._selected_ke_rows(mode)
+  File "C:\Users\DGA\Downloads\PROJECT TO MAU\check_bom.py", line 1301, in _selected_ke_rows
+    raise ValueError("Chua tai bang ke theo DG Case.")
+ValueError: Chua tai bang ke theo DG Case.
+2026-04-28 16:33:29,452 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:30,517 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:30,969 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:34,053 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:34,239 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:34,428 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:34,617 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:34,811 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:35,001 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:35,829 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:36,017 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:36,224 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:36,936 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:37,325 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:37,527 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:42,234 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:44,174 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:44,360 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:44,550 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:44,745 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:45,354 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:33:45,543 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:34:21,498 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:35:11,334 [INFO] Parse bang ke moi va luu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:35:48,793 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:36:27,066 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:37:10,507 [ERROR] Loi compare
+Traceback (most recent call last):
+  File "C:\Users\DGA\Downloads\PROJECT TO MAU\check_bom.py", line 1334, in _run_compare
+    raise ValueError("Check PM can chon toi thieu 2 moc thoi gian.")
+ValueError: Check PM can chon toi thieu 2 moc thoi gian.
+2026-04-28 16:37:26,312 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:42:08,912 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx
+2026-04-28 16:44:57,073 [INFO] Load bang ke tu cache: C:/Users/DGA/Downloads/PROJECT TO MAU/B\u1ea2NG KÊ Ð\u1ecaNH M\u1ee8C S\u1ea2N XU\u1ea4T.xlsx

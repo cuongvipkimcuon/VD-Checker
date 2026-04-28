@@ -1,4 +1,43 @@
 {
   "order_file": "C:/Users/DGA/Downloads/PROJECT TO MAU/ORDER LIST 16.04.2026.xlsx",
-  "bang_ke_file": "C:/Users/DGA/Downloads/PROJECT TO MAU/BẢNG KÊ ĐỊNH MỨC SẢN XUẤT.xlsx"
+  "bang_ke_file": "C:/Users/DGA/Downloads/PROJECT TO MAU/BẢNG KÊ ĐỊNH MỨC SẢN XUẤT.xlsx",
+  "shipped_file": "C:/Users/DGA/Downloads/PROJECT TO MAU/SHIPPED ORDER LIST FROM 2024 TO PRESENT .xlsx",
+  "color_code_pairs": [
+    {
+      "code": "100",
+      "name": "Black"
+    },
+    {
+      "code": "507",
+      "name": "Orange"
+    },
+    {
+      "code": "204",
+      "name": "Marine Blue"
+    },
+    {
+      "code": "503",
+      "name": "Red"
+    },
+    {
+      "code": "800",
+      "name": "White"
+    },
+    {
+      "code": "209",
+      "name": "Blue"
+    },
+    {
+      "code": "305",
+      "name": "Green"
+    },
+    {
+      "code": "702",
+      "name": "Yellow"
+    },
+    {
+      "code": "402",
+      "name": "Grey"
+    }
+  ]
 }
