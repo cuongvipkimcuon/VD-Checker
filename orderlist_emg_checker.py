@@ -144,9 +144,13 @@ def normalize_logo(value: object) -> str:
     return clean_text(value)
 
 
-def logo_type_from_order_logo_text(value: object) -> str:
-    """Map logo type text (cột R) thành mã chuẩn 710/720/730 hoặc NO LOGO."""
-    key = clean_key(value)
+def logo_type_from_order_logo_text(
+    value: object, logo_phrase_pairs: list[dict[str, str]] | None = None
+) -> str:
+    """Map logo type text (cột R) thành mã chuẩn 710/720/730 hoặc NO LOGO.
+    Áp bảng chuẩn hóa logo (tab Thiết lập) rồi nhận diện transfer / print / embroidery (incl. EMB)."""
+    canon = apply_logo_phrase_canonical_for_compare(value, logo_phrase_pairs)
+    key = clean_key(canon)
     if not key:
         return "NO LOGO"
     codes: list[str] = []
@@ -154,7 +158,7 @@ def logo_type_from_order_logo_text(value: object) -> str:
         codes.append("710")
     if "print" in key:
         codes.append("720")
-    if "embroi" in key:
+    if "embroi" in key or key == "emb" or (len(key) >= 3 and key.endswith("emb")):
         codes.append("730")
     if not codes:
         return "NO LOGO"
@@ -255,6 +259,7 @@ DEFAULT_COLOR_CODE_PAIRS: tuple[tuple[str, str], ...] = (
     ("702", "Yellow"),
 )
 COLOR_MAP_CONFIG_KEY = "color_code_pairs"
+LOGO_PHRASE_MAP_CONFIG_KEY = "logo_phrase_pairs"
 
 
 def color_name_from_code(color_code: str, color_pairs: list[dict[str, str]] | None = None) -> str:
@@ -353,6 +358,54 @@ def dedupe_color_pairs(color_pairs: list[dict[str, str]]) -> list[dict[str, str]
         seen.add(key)
         out.append({"code": code, "name": name})
     return out
+
+
+def dedupe_logo_phrase_pairs(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    out: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for item in rows:
+        if not isinstance(item, dict):
+            continue
+        f = clean_text(item.get("from", ""))
+        t = clean_text(item.get("to", ""))
+        if not f or not t:
+            continue
+        fk = clean_key(f)
+        if fk in seen:
+            continue
+        seen.add(fk)
+        out.append({"from": f, "to": t})
+    return out
+
+
+def load_logo_phrase_pairs_from_config(config: dict) -> list[dict[str, str]]:
+    raw = config.get(LOGO_PHRASE_MAP_CONFIG_KEY, [])
+    rows: list[dict[str, str]] = []
+    if isinstance(raw, list):
+        for item in raw:
+            if not isinstance(item, dict):
+                continue
+            f = clean_text(item.get("from", ""))
+            t = clean_text(item.get("to", ""))
+            if f and t:
+                rows.append({"from": f, "to": t})
+    return dedupe_logo_phrase_pairs(rows)
+
+
+def apply_logo_phrase_canonical_for_compare(value: object, pairs: list[dict[str, str]] | None) -> str:
+    """Khớp nguyên ô (clean_key): từ đọc được → chuỗi dùng để suy 710/720/730."""
+    base = clean_text(value)
+    if not pairs:
+        return base
+    ck_full = clean_key(base)
+    for item in pairs:
+        f = clean_text(item.get("from", ""))
+        t = clean_text(item.get("to", ""))
+        if not f or not t:
+            continue
+        if clean_key(f) == ck_full:
+            return t
+    return base
 
 
 def load_config() -> dict:
@@ -742,7 +795,9 @@ def annotate_bang_ke_for_fast_lookup(bang_ke_df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-def extract_order_like_metrics(group: pd.DataFrame) -> dict[str, object]:
+def extract_order_like_metrics(
+    group: pd.DataFrame, logo_phrase_pairs: list[dict[str, str]] | None = None
+) -> dict[str, object]:
     if group.empty:
         return {
             "order_no": "",
@@ -761,7 +816,9 @@ def extract_order_like_metrics(group: pd.DataFrame) -> dict[str, object]:
         "order_no": mode_value(group.iloc[:, 1]),
         "qty_total": sum(v for v in group.iloc[:, 6].apply(to_number) if v is not None),
         "logo": normalize_logo(mode_value(group.iloc[:, 9])),
-        "logo_type": logo_type_from_order_logo_text(mode_value(group.iloc[:, 17])),
+        "logo_type": logo_type_from_order_logo_text(
+            mode_value(group.iloc[:, 17]), logo_phrase_pairs
+        ),
         "ma_sp": mode_value(group.iloc[:, 7]),
         "ten_sp": mode_value(group.iloc[:, 8]),
         "color_k": mode_value(group.iloc[:, 10]),
@@ -831,6 +888,7 @@ class OrderlistCheckerApp:
         self._bang_ke_df_by_path: OrderedDict[str, pd.DataFrame] = OrderedDict()
         self.color_pairs: list[dict[str, str]] = load_color_pairs_from_config(self.config)
         self.color_alias_by_code: dict[str, set[str]] = build_color_alias_lookup(self.color_pairs)
+        self.logo_phrase_pairs: list[dict[str, str]] = load_logo_phrase_pairs_from_config(self.config)
         self.rules_page_size = 50
         self.rules_page = 1
         self.rules_total_pages = 1
@@ -856,7 +914,7 @@ class OrderlistCheckerApp:
         self.notebook.add(self.tab_check, text="Check")
         self.notebook.add(self.tab_history, text="Lịch sử")
         self.notebook.add(self.tab_rules, text="Quy tắc")
-        self.notebook.add(self.tab_colors, text="Thiết lập màu")
+        self.notebook.add(self.tab_colors, text="Thiết lập màu & logo")
         self.notebook.add(self.tab_data, text="Data")
 
         top = ttk.Frame(self.tab_check, padding=10)
@@ -880,6 +938,7 @@ class OrderlistCheckerApp:
         action.grid(row=3, column=2, sticky="e", pady=(10, 4))
         ttk.Button(action, text="Run All", command=self.run_all).pack(side="left")
         ttk.Button(action, text="Run One", command=self.run_one).pack(side="left", padx=(6, 0))
+        ttk.Button(action, text="Refresh run", command=self.refresh_check_run).pack(side="left", padx=(10, 0))
         ttk.Label(top, text="Khách hàng (cột F) cho Run All:").grid(row=4, column=0, sticky="w", padx=(0, 8), pady=(0, 4))
         self.customer_filter_combo = ttk.Combobox(
             top,
@@ -985,25 +1044,31 @@ class OrderlistCheckerApp:
     def _load_color_pairs_for_ui(self) -> list[dict[str, str]]:
         return load_color_pairs_from_config(self.config)
 
+    def _load_logo_phrase_pairs_for_ui(self) -> list[dict[str, str]]:
+        return load_logo_phrase_pairs_from_config(self.config)
+
     def _build_color_settings_tab(self) -> None:
         outer = ttk.Frame(self.tab_colors, padding=(10, 10, 10, 10))
         outer.pack(fill="both", expand=True)
+
+        lf_mau = ttk.LabelFrame(outer, text="Chuẩn hóa màu", padding=(8, 8, 8, 8))
+        lf_mau.pack(fill="both", expand=True, pady=(0, 10))
         ttk.Label(
-            outer,
+            lf_mau,
             text="Bảng thiết lập mã màu dùng để đối chiếu màu trên OL/SHIPPED.",
             wraplength=960,
         ).pack(anchor="w", pady=(0, 6))
         ttk.Label(
-            outer,
+            lf_mau,
             text="Có thể thêm/sửa/xóa tự do. Một mã màu có thể khai báo nhiều tên (ví dụ: Gray/Grey, Blue/Marine Blue).",
             foreground="#555555",
             wraplength=960,
         ).pack(anchor="w", pady=(0, 10))
 
-        table_wrap = ttk.Frame(outer)
+        table_wrap = ttk.Frame(lf_mau)
         table_wrap.pack(fill="both", expand=True)
         cols = ("code", "name")
-        tree = ttk.Treeview(table_wrap, columns=cols, show="headings", height=14)
+        tree = ttk.Treeview(table_wrap, columns=cols, show="headings", height=10)
         tree.heading("code", text="Mã màu")
         tree.heading("name", text="Tên màu")
         tree.column("code", width=140, anchor="center")
@@ -1013,7 +1078,7 @@ class OrderlistCheckerApp:
         sb.pack(side="right", fill="y")
         tree.configure(yscrollcommand=sb.set)
 
-        input_row = ttk.Frame(outer)
+        input_row = ttk.Frame(lf_mau)
         input_row.pack(fill="x", pady=(10, 0))
         ttk.Label(input_row, text="Mã màu:").pack(side="left")
         code_var = tk.StringVar()
@@ -1089,7 +1154,7 @@ class OrderlistCheckerApp:
             self.status_var.set("Đã lưu thiết lập màu sắc.")
             messagebox.showinfo("Thiết lập màu", f"Đã lưu {len(rows)} dòng mapping màu.")
 
-        btn_row = ttk.Frame(outer)
+        btn_row = ttk.Frame(lf_mau)
         btn_row.pack(fill="x", pady=(10, 0))
         ttk.Button(btn_row, text="Thêm / Cập nhật dòng chọn", command=_add_or_update_selected).pack(side="left")
         ttk.Button(btn_row, text="Xóa dòng chọn", command=_delete_selected).pack(side="left", padx=(8, 0))
@@ -1097,6 +1162,115 @@ class OrderlistCheckerApp:
         ttk.Button(btn_row, text="Lưu thiết lập màu", command=_save_color_settings).pack(side="left", padx=(18, 0))
 
         _fill_tree(self._load_color_pairs_for_ui())
+
+        lf_logo = ttk.LabelFrame(outer, text="Chuẩn hóa cụm logo (Order List cột R)", padding=(8, 8, 8, 8))
+        lf_logo.pack(fill="both", expand=True)
+        ttk.Label(
+            lf_logo,
+            text="Mỗi dòng: «Từ đọc được» (đúng text trên file) → «Từ hiểu & so sánh» (chuỗi dùng suy loại 710/720/730).",
+            wraplength=960,
+        ).pack(anchor="w", pady=(0, 4))
+        ttk.Label(
+            lf_logo,
+            text="Khớp theo nguyên ô (sau khi bỏ dấu/khoảng trắng). Ví dụ: EMB / Print+EMB có thể map sang Embroidery / Print Embroidery.",
+            foreground="#555555",
+            wraplength=960,
+        ).pack(anchor="w", pady=(0, 8))
+
+        logo_table = ttk.Frame(lf_logo)
+        logo_table.pack(fill="both", expand=True)
+        lcols = ("read_from", "compare_to")
+        logo_tree = ttk.Treeview(logo_table, columns=lcols, show="headings", height=8)
+        logo_tree.heading("read_from", text="Từ đọc được (OL)")
+        logo_tree.heading("compare_to", text="Từ hiểu & so sánh")
+        logo_tree.column("read_from", width=280, anchor="w")
+        logo_tree.column("compare_to", width=380, anchor="w")
+        logo_tree.pack(side="left", fill="both", expand=True)
+        lsb = ttk.Scrollbar(logo_table, orient="vertical", command=logo_tree.yview)
+        lsb.pack(side="right", fill="y")
+        logo_tree.configure(yscrollcommand=lsb.set)
+
+        logo_input = ttk.Frame(lf_logo)
+        logo_input.pack(fill="x", pady=(10, 0))
+        ttk.Label(logo_input, text="Từ đọc được:").pack(side="left")
+        logo_from_var = tk.StringVar()
+        logo_to_var = tk.StringVar()
+        ttk.Entry(logo_input, textvariable=logo_from_var, width=34).pack(side="left", padx=(6, 12))
+        ttk.Label(logo_input, text="Từ hiểu & so sánh:").pack(side="left")
+        ttk.Entry(logo_input, textvariable=logo_to_var, width=40).pack(side="left", padx=(6, 12))
+
+        def _fill_logo_tree(rows: list[dict[str, str]]) -> None:
+            for iid in logo_tree.get_children():
+                logo_tree.delete(iid)
+            for item in rows:
+                logo_tree.insert("", "end", values=(item["from"], item["to"]))
+
+        def _read_logo_rows_from_tree() -> list[dict[str, str]]:
+            lr: list[dict[str, str]] = []
+            for iid in logo_tree.get_children():
+                vals = logo_tree.item(iid, "values")
+                if not vals:
+                    continue
+                fr = clean_text(vals[0] if len(vals) > 0 else "")
+                to = clean_text(vals[1] if len(vals) > 1 else "")
+                if fr and to:
+                    lr.append({"from": fr, "to": to})
+            return dedupe_logo_phrase_pairs(lr)
+
+        def _on_logo_tree_select(_: object | None = None) -> None:
+            sel = logo_tree.selection()
+            if not sel:
+                return
+            vals = logo_tree.item(sel[0], "values")
+            logo_from_var.set(clean_text(vals[0] if len(vals) > 0 else ""))
+            logo_to_var.set(clean_text(vals[1] if len(vals) > 1 else ""))
+
+        logo_tree.bind("<<TreeviewSelect>>", _on_logo_tree_select)
+
+        def _logo_add_or_update() -> None:
+            fr = clean_text(logo_from_var.get())
+            to = clean_text(logo_to_var.get())
+            if not fr or not to:
+                messagebox.showwarning("Thiếu dữ liệu", "Nhập đủ «Từ đọc được» và «Từ hiểu & so sánh».")
+                return
+            sel = logo_tree.selection()
+            if sel:
+                logo_tree.item(sel[0], values=(fr, to))
+            else:
+                logo_tree.insert("", "end", values=(fr, to))
+            _fill_logo_tree(_read_logo_rows_from_tree())
+            logo_from_var.set("")
+            logo_to_var.set("")
+
+        def _logo_delete() -> None:
+            sel = logo_tree.selection()
+            if not sel:
+                messagebox.showinfo("Thiếu dòng chọn", "Chọn một dòng để xóa.")
+                return
+            logo_tree.delete(sel[0])
+
+        def _logo_clear_all() -> None:
+            _fill_logo_tree([])
+
+        def _save_logo_phrase_settings() -> None:
+            rows = _read_logo_rows_from_tree()
+            self.config[LOGO_PHRASE_MAP_CONFIG_KEY] = rows
+            save_config(self.config)
+            self.logo_phrase_pairs = load_logo_phrase_pairs_from_config(self.config)
+            self._refresh_check_tab_current_data("chuẩn logo")
+            self.status_var.set("Đã lưu thiết lập chuẩn hóa logo.")
+            messagebox.showinfo("Chuẩn hóa logo", f"Đã lưu {len(rows)} dòng mapping logo.")
+
+        logo_btn_row = ttk.Frame(lf_logo)
+        logo_btn_row.pack(fill="x", pady=(10, 0))
+        ttk.Button(logo_btn_row, text="Thêm / Cập nhật dòng chọn", command=_logo_add_or_update).pack(side="left")
+        ttk.Button(logo_btn_row, text="Xóa dòng chọn", command=_logo_delete).pack(side="left", padx=(8, 0))
+        ttk.Button(logo_btn_row, text="Xóa hết bảng", command=_logo_clear_all).pack(side="left", padx=(8, 0))
+        ttk.Button(logo_btn_row, text="Lưu chuẩn hóa logo", command=_save_logo_phrase_settings).pack(
+            side="left", padx=(18, 0)
+        )
+
+        _fill_logo_tree(self._load_logo_phrase_pairs_for_ui())
 
     def _build_rules_tab(self) -> None:
         top = ttk.Frame(self.tab_rules, padding=(10, 10, 10, 6))
@@ -2529,11 +2703,77 @@ class OrderlistCheckerApp:
             )
             self.last_result_df = refreshed_df
             self.render_check_main_table(refreshed_df)
+            db_note = ""
+            if self.current_run_id is not None and not refreshed_df.empty:
+                self.replace_run_items_for_run(
+                    self.current_run_id,
+                    refreshed_df,
+                    order_file,
+                    shipped_file,
+                    bang_ke_file,
+                )
+                db_note = f" | Đã cập nhật DB run #{self.current_run_id}"
+            elif self.current_run_id is not None and refreshed_df.empty:
+                db_note = " | Giữ nguyên DB (kết quả refresh rỗng)"
             self.status_var.set(
-                f"Đã cập nhật tab Check sau khi lưu {reason}. Dòng check: {len(refreshed_df)}"
+                f"Đã cập nhật tab Check sau khi lưu {reason}. Dòng check: {len(refreshed_df)}{db_note}"
             )
         except Exception as exc:
             self.status_var.set(f"Đã lưu {reason}, nhưng chưa refresh được tab Check: {exc}")
+
+    def refresh_check_run(self) -> None:
+        """Tính lại so sánh (file + quy tắc + thiết lập hiện tại), giữ Run ID và xác nhận case trong DB."""
+        if self.last_result_df is None or self.last_result_df.empty:
+            messagebox.showinfo("Refresh run", "Chưa có kết quả trên tab Check — hãy Run All / Run One trước.")
+            return
+        if self.current_run_id is None:
+            messagebox.showwarning(
+                "Refresh run",
+                "Chưa có Run ID trong phiên này (chưa ghi DB sau Run).\n"
+                "Hãy chạy Run All / Run One một lần, rồi dùng Refresh run để cập nhật lại.",
+            )
+            return
+        order_file = self.order_file_var.get().strip()
+        shipped_file = self.shipped_file_var.get().strip()
+        bang_ke_file = self.bang_ke_file_var.get().strip()
+        if not order_file or not shipped_file or not bang_ke_file:
+            messagebox.showwarning("Thiếu file", "Hãy chọn đủ file ORDER LIST, SHIPPED LIST và Bảng Kê.")
+            return
+        if not Path(order_file).exists() or not Path(shipped_file).exists() or not Path(bang_ke_file).exists():
+            messagebox.showerror("Sai đường dẫn", "Một trong ba file không tồn tại.")
+            return
+        self.status_var.set("Đang refresh run (đọc file + quy tắc/thiết lập mới nhất)...")
+        self.root.update_idletasks()
+        try:
+            refreshed_df = self.compare_files(
+                order_file,
+                shipped_file,
+                bang_ke_file,
+                self.last_target_dg if self.last_run_type == "one" else None,
+                self.last_run_customer_filter,
+            )
+            if refreshed_df.empty:
+                messagebox.showwarning(
+                    "Refresh run",
+                    "Kết quả sau khi tính lại đang rỗng — không ghi DB để tránh xóa hết chi tiết run.",
+                )
+                self.status_var.set("Refresh run: kết quả rỗng — giữ nguyên DB và bảng hiện tại.")
+                return
+            rid = int(self.current_run_id)
+            self.replace_run_items_for_run(rid, refreshed_df, order_file, shipped_file, bang_ke_file)
+            self.last_result_df = refreshed_df
+            self.render_check_main_table(refreshed_df)
+            ok_count = int((refreshed_df["status_core"] == "Đúng").sum())
+            bad_count = int((refreshed_df["status_core"] == "Lệch").sum())
+            self.status_var.set(
+                f"Refresh run #{rid} xong — đã ghi DB. Dòng: {len(refreshed_df)} | Đúng: {ok_count} | Lệch: {bad_count} "
+                "| Xác nhận theo DG (OK lưu) vẫn giữ."
+            )
+        except Exception as exc:
+            messagebox.showerror("Refresh run", str(exc))
+            self.status_var.set("Refresh run: có lỗi.")
+        finally:
+            self._run_progress_done()
 
     def compare_files(
         self,
@@ -2713,8 +2953,8 @@ class OrderlistCheckerApp:
 
             try:
                 current_compare_target = "đọc dữ liệu ORDER LIST và SHIPPED LIST theo DG"
-                order_metrics = extract_order_like_metrics(order_group)
-                shipped_metrics = extract_order_like_metrics(shipped_group)
+                order_metrics = extract_order_like_metrics(order_group, self.logo_phrase_pairs)
+                shipped_metrics = extract_order_like_metrics(shipped_group, self.logo_phrase_pairs)
                 ol_missing = order_group.empty
                 sum_qty_total = float(order_metrics["qty_total"]) + float(shipped_metrics["qty_total"])
                 sum_carton_qty = float(order_metrics["carton_qty"]) + float(shipped_metrics["carton_qty"])
@@ -3115,6 +3355,66 @@ class OrderlistCheckerApp:
         conn.close()
         self.refresh_history_runs()
         return run_id
+
+    def replace_run_items_for_run(
+        self,
+        run_id: int,
+        result_df: pd.DataFrame,
+        order_file: str,
+        shipped_file: str,
+        bang_ke_file: str,
+    ) -> None:
+        """Ghi đè chi tiết run (run_items) + cập nhật trace file; giữ nguyên run_case_meta."""
+        if result_df.empty:
+            return
+        t_ol = trace_orderlist_filename(order_file)
+        t_ship = trace_shipped_file_mtime_local(shipped_file)
+        t_a6 = trace_bang_ke_sheet_a6(bang_ke_file)
+        conn = sqlite3.connect(DB_FILE)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM run_items WHERE run_id = ?", (run_id,))
+        rows = [
+            (
+                run_id,
+                str(rec["dg_case_no"]),
+                str(rec["field_name"]),
+                str(rec["order_value"]),
+                str(rec.get("shipped_value", "")),
+                str(rec["bang_ke_value"]),
+                str(rec.get("auto_status", rec["status_core"])),
+                str(rec["status_core"]),
+                0,
+                str(rec.get("adjust_reason", "")),
+                str(rec.get("production_no", "")),
+                str(rec.get("ship_date_display", "")),
+            )
+            for rec in result_df.to_dict("records")
+        ]
+        cur.executemany(
+            """
+            INSERT INTO run_items (
+                run_id, dg_case_no, field_name, order_value, shipped_value, bang_ke_value,
+                auto_status, status, is_adjusted, adjust_reason, production_no, ship_date_display
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            rows,
+        )
+        cur.execute(
+            """
+            UPDATE runs SET
+                order_file = ?,
+                bang_ke_file = ?,
+                trace_orderlist_filename = ?,
+                trace_shipped_file_mtime = ?,
+                trace_bang_ke_a6 = ?
+            WHERE id = ?
+            """,
+            (order_file, bang_ke_file, t_ol, t_ship, t_a6, run_id),
+        )
+        conn.commit()
+        conn.close()
+        self.refresh_history_runs()
 
     def render_result(self, result_df: pd.DataFrame | None = None) -> None:
         """Giữ tên cũ — luôn hiển thị bảng tổng hợp theo DG."""
