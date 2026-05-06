@@ -4,13 +4,14 @@ from tkinter import ttk
 import check_npl_ton_am
 import check_bom
 import orderlist_emg_checker
+import quotation_support
 
 
 class SuperAppLauncher:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("Super APP - EMG + NPL + BOM")
-        self.root.geometry("460x260")
+        self.root.geometry("460x320")
         self.root.resizable(False, False)
         self._build_ui()
 
@@ -43,6 +44,13 @@ class SuperAppLauncher:
             text="Check BOM",
             command=self.open_check_bom,
             width=38,
+        ).pack(anchor="w", pady=(0, 8))
+
+        ttk.Button(
+            wrap,
+            text="Quotation Support",
+            command=self.open_quotation_support,
+            width=38,
         ).pack(anchor="w")
 
         ttk.Label(
@@ -62,6 +70,10 @@ class SuperAppLauncher:
     def open_check_bom(self) -> None:
         self.root.destroy()
         check_bom.main(back_to_launcher=main)
+
+    def open_quotation_support(self) -> None:
+        self.root.destroy()
+        quotation_support.main(back_to_launcher=main)
 
 
 def main() -> None:

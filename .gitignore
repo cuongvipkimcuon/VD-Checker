@@ -1,0 +1,14 @@
+build/
+dist/
+dist_release/
+__pycache__/
+*.pyc
+
+# Local runtime artifacts
+quotation_support.db
+quotation_support_config.json
+*.log
+
+# Temporary Excel lock files
+~$*.xlsx
+~$*.xls
